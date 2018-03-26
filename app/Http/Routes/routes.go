@@ -13,5 +13,7 @@ func Routing() *chi.Mux {
 
 	//define route
 	r.Get("/", UserHandler{}.Index)
+	r.Get("/add", UserHandler{}.Create)
+	r.Post("/add", UserHandler{}.Store)
 	return r
 }
