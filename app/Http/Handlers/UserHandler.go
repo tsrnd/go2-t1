@@ -1,4 +1,4 @@
-package Controllers
+package Handlers
 
 import (
 	DB "go-t1/Database"
@@ -7,11 +7,11 @@ import (
 	"net/http"
 )
 
-type UserController struct {
+type UserHandler struct {
 }
 
 //
-func (UserController) Index(w http.ResponseWriter, r *http.Request) {
+func (UserHandler) Index(w http.ResponseWriter, r *http.Request) {
 	db := DB.Connect()
 	tmpl, err := template.ParseFiles("app/Views/Users/index.html")
 	if err != nil {

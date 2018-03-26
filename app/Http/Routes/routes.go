@@ -1,7 +1,7 @@
 package Routes
 
 import (
-	. "go-t1/app/Http/Controllers"
+	. "go-t1/app/Http/Handlers"
 
 	// . "go-t1/app/Helpers"
 
@@ -12,6 +12,6 @@ func Routing() *chi.Mux {
 	r := chi.NewRouter()
 
 	//define route
-	r.Get("/", UserController{}.Index)
+	r.Get("/", UserHandler{}.Index)
 	return r
 }
