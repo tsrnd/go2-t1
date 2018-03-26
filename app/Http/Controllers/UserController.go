@@ -13,11 +13,11 @@ type UserController struct {
 //
 func (UserController) Index(w http.ResponseWriter, r *http.Request) {
 	db := DB.Connect()
-	tmpl, err := template.ParseFiles("app/Views/index.html")
+	tmpl, err := template.ParseFiles("app/Views/Users/index.html")
 	if err != nil {
 		panic(err)
 	}
-	rs, err := db.Query("SELECT * FROM user")
+	rs, err := db.Query("SELECT * FROM users")
 	if err != nil {
 		panic(err.Error())
 	}
