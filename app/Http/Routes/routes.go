@@ -13,9 +13,5 @@ func Routing() *chi.Mux {
 
 	//define route
 	r.Get("/", UserController{}.Index)
-	r.Get("/register", UserController{}.Register)
-	r.Post("/register", UserController{}.Create)
-	r.Get("/login", UserController{}.LoginForm)
-	r.Post("/login", UserController{}.Login)
 	return r
 }
