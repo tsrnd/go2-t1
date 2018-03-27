@@ -1,34 +1,26 @@
 package Handlers
 
 import (
-	DB "go-t1/Database"
-	"go-t1/app/Models"
+	// . "go-t1/app/Models"
 	"html/template"
 	"net/http"
 )
 
 type UserHandler struct {
+	repo UserRepository
+}
+
+func NewUserHandler(repo UserRepository) *UserHandler {
+	return &UserHandler{repo}
 }
 
 //
-func (UserHandler) Index(w http.ResponseWriter, r *http.Request) {
-	db := DB.Connect()
+func (controller UserHandler) Index(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("app/Views/Users/index.html")
+	users := controller.repo.GetListUser()
 	if err != nil {
-		panic(err)
-	}
-	rs, err := db.Query("SELECT * FROM users")
-	if err != nil {
-		panic(err.Error())
-	}
-	user := Models.User{}
-	users := []Models.User{}
-	for rs.Next() {
-		err := rs.Scan(&user.Id, &user.Name, &user.City, &user.Indentity_id, &user.Gender)
-		if err != nil {
-			panic(err)
-		}
-		users = append(users, user)
+		http.Error(w, "Not Found", http.StatusNotFound)
+		return
 	}
 	tmpl.Execute(w, users)
 }
