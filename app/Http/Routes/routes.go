@@ -1,21 +1,22 @@
 package Routes
 
 import (
-	. "go-t1/app/Http/Controllers"
-
-	. "go-t1/app/Helpers"
+	. "go-t1/app/Http/Handlers"
 
 	"github.com/go-chi/chi"
+	"github.com/jinzhu/gorm"
 )
 
-func Routing() *chi.Mux {
+func Routing(db *gorm.DB) *chi.Mux {
 	r := chi.NewRouter()
 
 	//define route
-	r.Get("/", AuthenticateMiddleware(UserController{}.Index))
-	r.Get("/register", UserController{}.Register)
-	r.Post("/register", UserController{}.Create)
-	r.Get("/login", UserController{}.LoginForm)
-	r.Post("/login", UserController{}.Login)
+	r.Get("/", userHandler(db).Index)
+
 	return r
+}
+
+func userHandler(db *gorm.DB) *UserHandler {
+	repo := NewUserRepository(db)
+	return NewUserHandler(repo)
 }
