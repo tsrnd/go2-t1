@@ -14,8 +14,7 @@ type userRepository struct {
 	DB *gorm.DB
 }
 
-func (u *userRepository) GetListUser() []User {
-	defer u.DB.Close()
+func (u userRepository) GetListUser() []User {
 	users := []User{}
 	u.DB.Find(&users)
 	return users
