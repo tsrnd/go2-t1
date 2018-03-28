@@ -3,17 +3,21 @@ package Routes
 import (
 	. "go-t1/app/Http/Handlers"
 
-	// . "go-t1/app/Helpers"
-
 	"github.com/go-chi/chi"
+	"github.com/jinzhu/gorm"
 )
 
-func Routing() *chi.Mux {
+func Routing(db *gorm.DB) *chi.Mux {
 	r := chi.NewRouter()
 
 	//define route
-	r.Get("/", UserHandler{}.Index)
-	r.Get("/add", UserHandler{}.Create)
-	r.Post("/add", UserHandler{}.Store)
+	r.Get("/", userHandler(db).Index)
+	r.Get("/add", userHandler(db).Create)
+	r.Post("/add", userHandler(db).Store)
 	return r
+}
+
+func userHandler(db *gorm.DB) *UserHandler {
+	repo := NewUserRepository(db)
+	return NewUserHandler(repo)
 }

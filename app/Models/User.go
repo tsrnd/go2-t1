@@ -1,9 +1,18 @@
 package Models
 
+import (
+	"github.com/jinzhu/gorm"
+)
+
 type User struct {
-	Id           uint32
-	Name         string
-	City         string
-	Indentity_id int64
-	Gender       bool
+	gorm.Model
+	Id         uint32 `gorm:"primary_key"`
+	Name       string `sql:"type:text"`
+	City       string `sql:"type:text"`
+	IdentityId int64  `sql:"type:integer"`
+	Gender     bool   `sql:"type:boolean"`
+}
+
+func (User) TableName() string {
+	return "golang.users"
 }

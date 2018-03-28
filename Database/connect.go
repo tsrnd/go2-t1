@@ -1,20 +1,24 @@
 package database
 
 import (
-	"database/sql"
+	"log"
 	"os"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-func Connect() *sql.DB {
+func Connect() *gorm.DB {
 	dbType := os.Getenv("DATABASE_TYPE")
 	dbUsername := os.Getenv("DB_USER_NAME")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
-	db, err := sql.Open(dbType, dbUsername+":"+dbPassword+"@/"+dbName)
+	dbHostName := os.Getenv("DB_HOSTNAME")
+	dbPort := os.Getenv("DB_PORT")
+	db, err := gorm.Open(dbType, "host="+dbHostName+" port="+dbPort+" user="+dbUsername+" dbname="+dbName+" password="+dbPassword)
 	if err != nil {
-		panic(err)
+		log.Fatal(err.Error())
 	}
+	db.LogMode(true)
 	return db
 }

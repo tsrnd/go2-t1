@@ -1,40 +1,34 @@
 package Handlers
 
 import (
-	DB "go-t1/Database"
-	"go-t1/app/Models"
+
+	// . "go-t1/app/Models"
 	"html/template"
 	"net/http"
+	"strconv"
 )
 
 type UserHandler struct {
+	repo UserRepository
+}
+
+func NewUserHandler(repo UserRepository) *UserHandler {
+	return &UserHandler{repo}
 }
 
 //
-func (UserHandler) Index(w http.ResponseWriter, r *http.Request) {
-	db := DB.Connect()
+func (controller UserHandler) Index(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("app/Views/Users/index.html")
+	users := controller.repo.GetListUser()
 	if err != nil {
-		panic(err)
-	}
-	rs, err := db.Query("SELECT * FROM users")
-	if err != nil {
-		panic(err.Error())
-	}
-	user := Models.User{}
-	users := []Models.User{}
-	for rs.Next() {
-		err := rs.Scan(&user.Id, &user.Name, &user.City, &user.Indentity_id, &user.Gender)
-		if err != nil {
-			panic(err)
-		}
-		users = append(users, user)
+		http.Error(w, "Not Found", http.StatusNotFound)
+		return
 	}
 	tmpl.Execute(w, users)
 }
 
 //
-func (UserHandler) Create(w http.ResponseWriter, r *http.Request) {
+func (controller UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("app/Views/Users/create.html")
 	if err != nil {
 		http.Error(w, "Not Found", http.StatusNotFound)
@@ -45,30 +39,17 @@ func (UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 //
-func (UserHandler) Store(w http.ResponseWriter, r *http.Request) {
+func (controller UserHandler) Store(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Not found", http.StatusNotFound)
 		return
 	}
-	db := DB.Connect()
 	r.ParseForm()
 	name := r.FormValue("name")
 	city := r.FormValue("city")
-	identityId := r.FormValue("identity-id")
-	gender := r.FormValue("gender")
-	// Save to database
-	stmt, err := db.Prepare(`
-		INSERT INTO users(name, city, identity_id, gender)
-		VALUES(?, ?, ?, ?)
-	`)
-	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
-		return
-	}
-	_, err = stmt.Exec(name, city, identityId, gender)
-	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
-		return
-	}
+	identityID, _ := strconv.ParseInt(r.FormValue("identity-id"), 10, 64)
+	gender, _ := strconv.ParseBool(r.FormValue("gender"))
+	controller.repo.InsertUser(name, city, identityID, gender)
+
 	http.Redirect(w, r, "/", 301)
 }
