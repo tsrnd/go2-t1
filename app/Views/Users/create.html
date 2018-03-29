@@ -1,28 +1,40 @@
 <!DOCTYPE html>
 <html>
-
+<head>
+  <style type="text/css">
+  .error {
+    color: red
+  }
+  </style>
+</head>
 <body>
 
   <h2>Create User</h2>
-
   <form action="/add" method="POST">
+    <p class="error">{{ .Name }}</p>
     Name:
     <br>
     <input type="text" name="name">
     <br>
-    <br> City:
+    <br>
+    <p class="error">{{ .City }}</p>
+    City:
     <br>
     <input type="text" name="city">
     <br>
-    <br> Identity-Id:
+    <br>
+    <p class="error">{{ .IdentityID }}</p>
+    Identity-Id:
     <br>
     <input type="text" name="identity-id">
     <br>
-    <br> Gender:
     <br>
-    <input type="radio" name="gender" value="0"> Male
+    <p class="error">{{ .Gender }}</p>
+    Gender:
     <br>
-    <input type="radio" name="gender" value="1"> Female
+    <input type="radio" name="gender" value="1"> Male
+    <br>
+    <input type="radio" name="gender" value="0"> Female
     <br>
     <br>
     <br>
