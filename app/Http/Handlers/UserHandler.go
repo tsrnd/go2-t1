@@ -36,7 +36,7 @@ func (controller UserHandler) Index(w http.ResponseWriter, r *http.Request) {
 func (controller UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	userId, _ := strconv.ParseUint(r.FormValue("id"), 10, 32)
 	controller.repo.DeleteUser(uint32(userId))
-	http.Redirect(w, r, "/", 301)
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }
 
 //
@@ -80,6 +80,6 @@ func (controller UserHandler) Store(w http.ResponseWriter, r *http.Request) {
 		validate.Render(w, "app/Views/Users/create.html", m)
 	} else {
 		controller.repo.InsertUser(name, city, identityID, gender)
-		http.Redirect(w, r, "/", 301)
+		http.Redirect(w, r, "/", http.StatusMovedPermanently)
 	}
 }
