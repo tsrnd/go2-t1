@@ -9,6 +9,7 @@ import (
 
 type UserRepository interface {
 	GetListUser() []User
+	DeleteUser(id uint32) bool
 	InsertUser(name string, city string, identityID int64, gender bool)
 }
 
@@ -29,4 +30,9 @@ func (u userRepository) InsertUser(name string, city string, identityID int64, g
 
 func NewUserRepository(db *gorm.DB) UserRepository {
 	return &userRepository{db}
+}
+
+func (u userRepository) DeleteUser(id uint32) bool {
+	u.DB.Where("id = ?", id).Delete(&User{})
+	return true
 }

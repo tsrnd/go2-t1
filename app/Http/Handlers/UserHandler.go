@@ -33,6 +33,12 @@ func (controller UserHandler) Index(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, users)
 }
 
+func (controller UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	userId, _ := strconv.ParseUint(r.FormValue("id"), 10, 32)
+	controller.repo.DeleteUser(uint32(userId))
+	http.Redirect(w, r, "/", 301)
+}
+
 //
 func (controller UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("app/Views/Users/create.html")
