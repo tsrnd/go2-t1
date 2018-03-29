@@ -8,6 +8,7 @@ import (
 
 type UserRepository interface {
 	GetListUser() []User
+	DeleteUser(id uint32) bool
 }
 
 type userRepository struct {
@@ -22,4 +23,9 @@ func (u userRepository) GetListUser() []User {
 
 func NewUserRepository(db *gorm.DB) UserRepository {
 	return &userRepository{db}
+}
+
+func (u userRepository) DeleteUser(id uint32) bool {
+	u.DB.Where("id = ?", id).Delete(&User{})
+	return true
 }

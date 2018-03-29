@@ -2,8 +2,10 @@ package Handlers
 
 import (
 	// . "go-t1/app/Models"
+
 	"html/template"
 	"net/http"
+	"strconv"
 )
 
 type UserHandler struct {
@@ -23,4 +25,10 @@ func (controller UserHandler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tmpl.Execute(w, users)
+}
+
+func (controller UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	userId, _ := strconv.ParseUint(r.FormValue("id"), 10, 32)
+	controller.repo.DeleteUser(uint32(userId))
+	http.Redirect(w, r, "/", 301)
 }
