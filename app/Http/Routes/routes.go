@@ -12,6 +12,8 @@ func Routing(db *gorm.DB) *chi.Mux {
 
 	//define route
 	r.Get("/", userHandler(db).Index)
+	r.Get("/users/{user}", userHandler(db).Edit)
+	r.Post("/users/{user}/updates", userHandler(db).Update)
 
 	return r
 }
