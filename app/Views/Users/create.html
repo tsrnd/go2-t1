@@ -11,25 +11,25 @@
 
   <h2>Create User</h2>
   <form action="/add" method="POST">
-    <p class="error">{{ .Name }}</p>
+    <p class="error">{{ .ErrName }}</p>
     Name:
     <br>
     <input type="text" name="name">
     <br>
     <br>
-    <p class="error">{{ .City }}</p>
+    <p class="error">{{ .ErrCity }}</p>
     City:
     <br>
     <input type="text" name="city">
     <br>
     <br>
-    <p class="error">{{ .IdentityID }}</p>
+    <p class="error">{{ .ErrIdentityID }}</p>
     Identity-Id:
     <br>
     <input type="text" name="identity-id">
     <br>
     <br>
-    <p class="error">{{ .Gender }}</p>
+    <p class="error">{{ .ErrGender }}</p>
     Gender:
     <br>
     <input type="radio" name="gender" value="1"> Male

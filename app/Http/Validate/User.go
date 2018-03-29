@@ -10,18 +10,18 @@ import (
 
 //
 type User struct {
-	Name       string
-	City       string
-	IdentityID string
-	Gender     bool
+	ErrName       string
+	ErrCity       string
+	ErrIdentityID string
+	ErrGender     bool
 }
 
 func (a User) Validate() error {
 	return validation.ValidateStruct(&a,
-		validation.Field(&a.Name, validation.Required),
-		validation.Field(&a.City, validation.Required),
-		validation.Field(&a.IdentityID, validation.Required, validation.Match(regexp.MustCompile("^[0-9]{9}$")).Error("Must be a string with nine digits")),
-		validation.Field(&a.Gender, validation.Required),
+		validation.Field(&a.ErrName, validation.Required),
+		validation.Field(&a.ErrCity, validation.Required),
+		validation.Field(&a.ErrIdentityID, validation.Required, validation.Match(regexp.MustCompile("^[0-9]{9}$")).Error("Must be a string with nine digits")),
+		validation.Field(&a.ErrGender, validation.Required),
 	)
 }
 

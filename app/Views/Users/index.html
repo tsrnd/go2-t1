@@ -14,7 +14,7 @@
       <td>ID</td>
       <td>Name</td>
       <td>City</td>
-      <td>Indentity_id</td>
+      <td>Identity_id</td>
       <td>Gender</td>
       <td>Option</td>
                 </tr>
@@ -22,8 +22,8 @@
       <tbody>
         {{ range . }}
           <tr>
-            <td>{{ .ID }}</td>
-            <td> {{ .Name }} </td>
+            <td></a>{{ .ID }}</td>
+            <td><a href="/users/{{.ID}}"> {{ .Name }} </a></td>
             <td>{{ .City }} </td> 
             <td>{{ .IdentityId }} </td>
             <td>

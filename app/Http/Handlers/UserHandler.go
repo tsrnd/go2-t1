@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/go-chi/chi"
 )
 
 //
@@ -31,6 +33,33 @@ func (controller UserHandler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tmpl.Execute(w, users)
+}
+
+func (controller UserHandler) Edit(w http.ResponseWriter, r *http.Request) {
+	userID, _ := strconv.ParseUint(chi.URLParam(r, "user"), 10, 32)
+	user := controller.repo.Show(uint32(userID))
+	if user.ID == 0 {
+		http.Error(w, "Not Found", http.StatusNotFound)
+		return
+	}
+	tmpl, _ := template.ParseFiles("app/Views/Users/details.html")
+	tmpl.Execute(w, user)
+}
+
+func (controller UserHandler) Update(w http.ResponseWriter, r *http.Request) {
+	userID, _ := strconv.ParseUint(chi.URLParam(r, "user"), 10, 32)
+	name := r.FormValue("name")
+	city := r.FormValue("city")
+	identityID, _ := strconv.ParseInt(r.FormValue("identityID"), 10, 64)
+	gender, _ := strconv.ParseBool(r.FormValue("gender"))
+	userData := map[string]interface{}{
+		"name":        name,
+		"city":        city,
+		"indentityId": identityID,
+		"gender":      gender,
+	}
+	controller.repo.Update(uint32(userID), userData)
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
 }
 
 func (controller UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -64,10 +93,10 @@ func (controller UserHandler) Store(w http.ResponseWriter, r *http.Request) {
 
 	// validate database
 	user := validate.User{
-		Name:       name,
-		City:       city,
-		IdentityID: r.FormValue("identity-id"),
-		Gender:     gender,
+		ErrName:       name,
+		ErrCity:       city,
+		ErrIdentityID: r.FormValue("identity-id"),
+		ErrGender:     gender,
 	}
 	error := user.Validate()
 	if error != nil {
