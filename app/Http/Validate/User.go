@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"regexp"
 
-	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation"
 )
 
 //
