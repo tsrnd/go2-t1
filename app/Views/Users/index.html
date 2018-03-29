@@ -7,6 +7,7 @@
 
   <body>
     <h1>User Management</h1>
+    <div><a href="/add"><button type="button">Add User</button></a></div><br>
     <table border="1">
       <thead>
       <tr>
@@ -15,6 +16,7 @@
       <td>City</td>
       <td>Identity_id</td>
       <td>Gender</td>
+      <td>Option</td>
                 </tr>
       </thead>
       <tbody>
@@ -30,6 +32,12 @@
               {{else}}
                 Male
               {{end}}
+            </td>
+            <td>
+              <form action="/users" method="POST">
+              <input type="hidden" name="id" value="{{ .ID}}">
+              <button type="submit">Delete</button>
+              </form>
             </td>
           </tr>
         {{ end }}
