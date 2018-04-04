@@ -19,13 +19,13 @@ services:
     db:
         image: postgres:9.6.5-alpine
         ports:
-            - "5432:5432" # host:container
+            - "5433:5432" # host:container
         volumes:
         - data-vol:/var/lib/postgresql/data
         - ./migration/all:/docker-entrypoint-initdb.d
         environment:
             - POSTGRES_USER=postgres
-            - POSTGRES_DBNAME=sample    
+            - POSTGRES_DBNAME=circle    
             - POSTGRES_PASSWORD=mypass
             - POSTGRES_PORT=5432
         container_name: db-cont

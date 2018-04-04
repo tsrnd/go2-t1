@@ -9,9 +9,9 @@ DROP TABLE IF EXISTS user_app;
 CREATE TABLE user_app
 (
 	id_user_app serial NOT NULL UNIQUE,
-	uuid char(36) NOT NULL UNIQUE,
-	-- 文字数制限はユーザ登録要件未確定のため仮の値です。
 	user_name varchar(20),
+    password varchar(50),
+    phone varchar(11),
 	user_profile_image_url varchar(256),
 	created_at timestamp,
 	updated_at timestamp,

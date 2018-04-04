@@ -8,6 +8,7 @@ import (
 	"github.com/tsrnd/trainning/shared/handler"
 	"github.com/tsrnd/trainning/shared/repository"
 	"github.com/tsrnd/trainning/shared/usecase"
+	"github.com/tsrnd/trainning/shared/utils"
 )
 
 // HTTPHandler struct.
@@ -16,38 +17,18 @@ type HTTPHandler struct {
 	usecase UsecaseInterface
 }
 
-// RegisterByDevice to register user ID which originates from Device ID.
-//
-// "First": Search User from Entity by Device ID.
-// "Second": If User record exists,move to step "Finally".
-// "Third": If User record does not exist, register device ID to Entity.
-// "Finally":store User_ID acquired from Entity to JSON Web Token (JWT).
-func (h *HTTPHandler) RegisterByDevice(w http.ResponseWriter, r *http.Request) {
-	// mapping post to struct.
-	request := PostRegisterByDeviceRequest{}
-	err := h.Parse(r, &request)
-	if err != nil {
-		common := CommonResponse{Message: "Parse request error.", Errors: nil}
-		h.StatusBadRequest(w, common)
-		return
-	}
-
-	// validate get data.
-	if err = h.Validate(w, request); err != nil {
-		return
-	}
-
-	// request login by uuid.
-	response, err := h.usecase.RegisterByDevice(request.DeviceID)
+// GetAllUser return all users
+func (h *HTTPHandler) GetAllUser(w http.ResponseWriter, r *http.Request) {
+	user, err := h.usecase.GetAllUser()
 	if err != nil {
 		h.Logger.WithFields(logrus.Fields{
 			"error": err,
-		}).Error("usecaseInterface.LoginByDevice() error")
-		common := CommonResponse{Message: "Internal server error response.", Errors: nil}
+		}).Error("usecaseInterface.GetOutfitByImName() error")
+		common := utils.CommonResponse{Message: "Internal server error response", Errors: []string{}}
 		h.StatusServerError(w, common)
 		return
 	}
-	h.ResponseJSON(w, response)
+	h.ResponseJSON(w, user)
 }
 
 // NewHTTPHandler responses new HTTPHandler instance.

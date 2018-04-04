@@ -6,8 +6,10 @@ type CommonResponse struct {
 	Errors  []string `json:"errors,omitempty"`
 }
 
-// PostRegisterByDeviceResponse response.
-type PostRegisterByDeviceResponse struct {
-	CommonResponse
-	Token string `json:"token"`
+// ResponseUser is struct User
+type ResponseUser struct {
+	ID       uint64 `json:"id"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Phone    string `json:"phone"`
 }

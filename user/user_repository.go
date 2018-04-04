@@ -9,7 +9,7 @@ import (
 
 // RepositoryInterface interface.
 type RepositoryInterface interface {
-	FindOrCreate(string) (User, error)
+	GetAllUser() ([]User, error)
 }
 
 // Repository struct.
@@ -23,11 +23,14 @@ type Repository struct {
 	redis *redis.Conn
 }
 
-// FindOrCreate find user by uuid or create if uuid is not existed in DB.
-func (r *Repository) FindOrCreate(uuid string) (User, error) {
-	user := User{UUID: uuid}
-	err := r.masterDB.FirstOrCreate(&user, user).Error
-	return user, utils.ErrorsWrap(err, "Can't first or create")
+// GetAllUser return list user
+func (r *Repository) GetAllUser() ([]User, error) {
+	user := []User{}
+	err := r.readDB.Find(&user).Error
+	if err != nil {
+		err = utils.ErrorsWrap(err, "can't find user")
+	}
+	return user, err
 }
 
 // NewRepository responses new Repository instance.

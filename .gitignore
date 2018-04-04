@@ -1,0 +1,6 @@
+.idea
+vendor
+fr-circle-api
+tmp
+_*
+.DB

@@ -2,14 +2,13 @@ package user
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/tsrnd/trainning/authentication"
 	"github.com/tsrnd/trainning/shared/usecase"
 	"github.com/tsrnd/trainning/shared/utils"
 )
 
 // UsecaseInterface interface.
 type UsecaseInterface interface {
-	RegisterByDevice(uuid string) (PostRegisterByDeviceResponse, error)
+	GetAllUser() ([]ResponseUser, error)
 }
 
 // Usecase struct.
@@ -19,20 +18,18 @@ type Usecase struct {
 	repository RepositoryInterface
 }
 
-// RegisterByDevice func.
-func (u *Usecase) RegisterByDevice(uuid string) (response PostRegisterByDeviceResponse, err error) {
-	// var userID int64
-	response = PostRegisterByDeviceResponse{}
-	user, err := u.repository.FindOrCreate(uuid)
+// GetAllUser comment
+func (u *Usecase) GetAllUser() ([]ResponseUser, error) {
+	user, err := u.repository.GetAllUser()
 	if err != nil {
-		return response, utils.ErrorsWrap(err, "repositoryInterface.FindOrCreate() error")
+		err = utils.ErrorsWrap(err, "Error")
 	}
-	// store user to JWT
-	response.Token, err = authentication.GenerateToken(user)
-	if err != nil {
-		return response, utils.ErrorsWrap(err, "repository.GenerateJWToken() error")
+	responseUser := []ResponseUser{}
+
+	for _, v := range user {
+		responseUser = append(responseUser, ResponseUser{ID: v.ID, Username: v.Username, Password: v.Password, Phone: v.Phone})
 	}
-	return
+	return responseUser, err
 }
 
 // NewUsecase responses new Usecase instance.

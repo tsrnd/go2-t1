@@ -12,8 +12,10 @@ import (
 // http://jinzhu.me/gorm/models.html#model-definition
 type User struct {
 	ID       uint64 `gorm:"column:id_user_app;primary_key"`
-	UUID     string `gorm:"column:uuid;type:char(36)"`
-	UserName string `gorm:"column:user_name;type:varchar(20)"`
+	Username string `gorm:"column:user_name;type:char(36)"`
+	Password string `gorm:"column:password;type:char(20)"`
+	Phone    string `gorm:"column:phone;type:varchar(11)"`
+	Avatar   string `gorm:"column:user_profile_image_url;type:varchar(256)"`
 	model.BaseModel
 }
 
