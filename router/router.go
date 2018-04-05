@@ -40,13 +40,16 @@ func (r *Router) SetupHandler() {
 	r.Mux.Method(http.MethodGet, "/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	bh := handler.NewBaseHTTPHandler(r.LoggerHandler.Log)
-	// base set.
+	// base\\ set.
 	br := repository.NewBaseRepository(r.LoggerHandler.Log)
 	// base set.
 	bu := usecase.NewBaseUsecase(r.LoggerHandler.Log)
 	// user set.
 	uh := user.NewHTTPHandler(bh, bu, br, r.SQLHandler, r.CacheHandler)
-	r.Mux.Route("/v1", func(cr chi.Router) {
-		cr.Post("/register/device", uh.RegisterByDevice)
+	r.Mux.Post("/register", uh.Register)
+	r.Mux.Post("/login", uh.Login)
+	r.Mux.With(mMiddleware.JwtAuth(r.LoggerHandler)).Route("/", func(cr chi.Router) {
+		cr.Get("/index", uh.Index)
 	})
+	r.Mux.Get("/", uh.Index)
 }

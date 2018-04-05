@@ -3,7 +3,6 @@ package user
 import (
 	"net/http"
 
-	"github.com/sirupsen/logrus"
 	"github.com/tsrnd/trainning/infrastructure"
 	"github.com/tsrnd/trainning/shared/handler"
 	"github.com/tsrnd/trainning/shared/repository"
@@ -22,10 +21,10 @@ type HTTPHandler struct {
 // "Second": If User record exists,move to step "Finally".
 // "Third": If User record does not exist, register device ID to Entity.
 // "Finally":store User_ID acquired from Entity to JSON Web Token (JWT).
-func (h *HTTPHandler) RegisterByDevice(w http.ResponseWriter, r *http.Request) {
+func (h *HTTPHandler) Login(w http.ResponseWriter, r *http.Request) {
 	// mapping post to struct.
-	request := PostRegisterByDeviceRequest{}
-	err := h.Parse(r, &request)
+	request := UserLoginRequest{}
+	err := h.ParseMultipart(r, &request)
 	if err != nil {
 		common := CommonResponse{Message: "Parse request error.", Errors: nil}
 		h.StatusBadRequest(w, common)
@@ -38,11 +37,33 @@ func (h *HTTPHandler) RegisterByDevice(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// request login by uuid.
-	response, err := h.usecase.RegisterByDevice(request.DeviceID)
+	response, err := h.usecase.Login(request.Username, request.Password)
 	if err != nil {
-		h.Logger.WithFields(logrus.Fields{
-			"error": err,
-		}).Error("usecaseInterface.LoginByDevice() error")
+		common := CommonResponse{Message: "Internal server error response.", Errors: nil}
+		h.StatusServerError(w, common)
+		return
+	}
+	h.ResponseJSON(w, response)
+}
+
+func (h *HTTPHandler) Index(w http.ResponseWriter, r *http.Request) {
+	h.ResponseJSON(w, "ahihi")
+}
+
+func (h *HTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
+	request := UserRegisterRequest{}
+	err := h.ParseMultipart(r, &request)
+	if err != nil {
+		common := CommonResponse{Message: "Parse request error.", Errors: nil}
+		h.StatusBadRequest(w, common)
+		return
+	}
+
+	if err = h.Validate(w, request); err != nil {
+		return
+	}
+	response, err := h.usecase.Register(request.Username, request.Password, request.RepeatPassword)
+	if err != nil {
 		common := CommonResponse{Message: "Internal server error response.", Errors: nil}
 		h.StatusServerError(w, common)
 		return

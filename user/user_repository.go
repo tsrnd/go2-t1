@@ -9,7 +9,8 @@ import (
 
 // RepositoryInterface interface.
 type RepositoryInterface interface {
-	FindOrCreate(string) (User, error)
+	Find(string, string) (User, error)
+	Create(User) (User, error)
 }
 
 // Repository struct.
@@ -23,11 +24,20 @@ type Repository struct {
 	redis *redis.Conn
 }
 
-// FindOrCreate find user by uuid or create if uuid is not existed in DB.
-func (r *Repository) FindOrCreate(uuid string) (User, error) {
-	user := User{UUID: uuid}
-	err := r.masterDB.FirstOrCreate(&user, user).Error
-	return user, utils.ErrorsWrap(err, "Can't first or create")
+func (r *Repository) Create(user User) (User, error) {
+	checkingUser := User{}
+	err := r.readDB.Where("username = ?", user.Username).First(&checkingUser)
+	if checkingUser.ID > 0 {
+		return user, utils.ErrorsWrap(err.Error, "User already exists")
+	}
+	result := r.masterDB.Create(&user)
+	return user, utils.ErrorsWrap(result.Error, "Can't create user")
+}
+
+func (r *Repository) Find(username string, password string) (User, error) {
+	user := User{Username: username, Password: password}
+	err := r.masterDB.First(&user, user).Error
+	return user, utils.ErrorsWrap(err, "Can't find this user")
 }
 
 // NewRepository responses new Repository instance.

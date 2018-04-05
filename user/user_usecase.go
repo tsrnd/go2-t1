@@ -9,7 +9,8 @@ import (
 
 // UsecaseInterface interface.
 type UsecaseInterface interface {
-	RegisterByDevice(uuid string) (PostRegisterByDeviceResponse, error)
+	Login(string, string) (PostRegisterByDeviceResponse, error)
+	Register(string, string, string) (CommonResponse, error)
 }
 
 // Usecase struct.
@@ -19,18 +20,39 @@ type Usecase struct {
 	repository RepositoryInterface
 }
 
-// RegisterByDevice func.
-func (u *Usecase) RegisterByDevice(uuid string) (response PostRegisterByDeviceResponse, err error) {
+func (u *Usecase) Login(username string, password string) (response PostRegisterByDeviceResponse, err error) {
 	// var userID int64
 	response = PostRegisterByDeviceResponse{}
-	user, err := u.repository.FindOrCreate(uuid)
+	user, err := u.repository.Find(username, password)
 	if err != nil {
-		return response, utils.ErrorsWrap(err, "repositoryInterface.FindOrCreate() error")
+		return response, utils.ErrorsWrap(err, "repositoryInterface.Find() error")
 	}
 	// store user to JWT
 	response.Token, err = authentication.GenerateToken(user)
 	if err != nil {
 		return response, utils.ErrorsWrap(err, "repository.GenerateJWToken() error")
+	}
+	return
+}
+
+func (u *Usecase) Register(username string, password string, repeatPassword string) (response CommonResponse, err error) {
+	response = CommonResponse{}
+
+	if password != repeatPassword {
+		return response, utils.ErrorsWrap(err, "password not match")
+	}
+
+	response.Message = "Register success"
+	user := User{
+		Username: username,
+		Password: password,
+	}
+	tx := u.db.Begin()
+	_, err = u.repository.Create(user)
+	tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		return response, utils.ErrorsWrap(err, "repository.Create() error")
 	}
 	return
 }

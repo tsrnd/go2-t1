@@ -11,15 +11,17 @@ import (
 // User table struct.
 // http://jinzhu.me/gorm/models.html#model-definition
 type User struct {
-	ID       uint64 `gorm:"column:id_user_app;primary_key"`
-	UUID     string `gorm:"column:uuid;type:char(36)"`
-	UserName string `gorm:"column:user_name;type:varchar(20)"`
+	ID       uint64 `gorm:"column:id;primary_key"`
+	Username string `gorm:"column:username;type:char(36)"`
+	Password string `gorm:"column:password;type:char(20)"`
+	Phone    string `gorm:"column:phone;type:varchar(11)"`
+	Avatar   string `gorm:column:avatar;type:varchar(256)"`
 	model.BaseModel
 }
 
 // TableName function custom table name.
 func (User) TableName() string {
-	return "user_app"
+	return "users"
 }
 
 // GetCustomClaims get customs claims
