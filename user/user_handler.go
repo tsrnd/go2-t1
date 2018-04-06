@@ -19,7 +19,7 @@ func (h *HTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
 	request := PostRegisterRequest{}
 	err := h.Parse(r, &request)
 	if err != nil {
-		common := CommonResponse{Message: "Parse request error.", Errors: nil}
+		common := CommonResponse{Message: "Parse request error.", Errors: []string{}}
 		h.StatusBadRequest(w, common)
 		return
 	}
@@ -28,7 +28,7 @@ func (h *HTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 	response, err := h.usecase.Register(request)
 	if err != nil {
-		common := CommonResponse{Message: "Internal server error response.", Errors: nil}
+		common := CommonResponse{Message: "Internal server error response.", Errors: []string{}}
 		h.StatusServerError(w, common)
 		return
 	}
