@@ -3,12 +3,12 @@ package user
 import "mime/multipart"
 
 // PostRegisterByDeviceRequest struct.
-type UserLoginRequest struct {
+type LoginRequest struct {
 	Username string `form:"username" validate:"required,min=3"`
 	Password string `form:"password" validate:"required"`
 }
 
-type UserRegisterRequest struct {
+type RegisterRequest struct {
 	Username       string `form:"username" validate:"required,min=3"`
 	Password       string `form:"password" validate:"required"`
 	RepeatPassword string `form:"repeat_password" validate:"required"`

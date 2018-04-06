@@ -25,12 +25,7 @@ type Repository struct {
 }
 
 func (r *Repository) Create(user User) (User, error) {
-	checkingUser := User{}
-	err := r.readDB.Where("username = ?", user.Username).First(&checkingUser)
-	if checkingUser.ID > 0 {
-		return user, utils.ErrorsWrap(err.Error, "User already exists")
-	}
-	result := r.masterDB.Create(&user)
+	result := r.masterDB.FirstOrCreate(&user, User{Username: user.Username})
 	return user, utils.ErrorsWrap(result.Error, "Can't create user")
 }
 

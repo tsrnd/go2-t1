@@ -23,7 +23,7 @@ type HTTPHandler struct {
 // "Finally":store User_ID acquired from Entity to JSON Web Token (JWT).
 func (h *HTTPHandler) Login(w http.ResponseWriter, r *http.Request) {
 	// mapping post to struct.
-	request := UserLoginRequest{}
+	request := LoginRequest{}
 	err := h.ParseMultipart(r, &request)
 	if err != nil {
 		common := CommonResponse{Message: "Parse request error.", Errors: nil}
@@ -37,7 +37,7 @@ func (h *HTTPHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// request login by uuid.
-	response, err := h.usecase.Login(request.Username, request.Password)
+	response, err := h.usecase.Login(request)
 	if err != nil {
 		common := CommonResponse{Message: "Internal server error response.", Errors: nil}
 		h.StatusServerError(w, common)
@@ -46,12 +46,8 @@ func (h *HTTPHandler) Login(w http.ResponseWriter, r *http.Request) {
 	h.ResponseJSON(w, response)
 }
 
-func (h *HTTPHandler) Index(w http.ResponseWriter, r *http.Request) {
-	h.ResponseJSON(w, "ahihi")
-}
-
 func (h *HTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
-	request := UserRegisterRequest{}
+	request := RegisterRequest{}
 	err := h.ParseMultipart(r, &request)
 	if err != nil {
 		common := CommonResponse{Message: "Parse request error.", Errors: nil}
@@ -62,7 +58,7 @@ func (h *HTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
 	if err = h.Validate(w, request); err != nil {
 		return
 	}
-	response, err := h.usecase.Register(request.Username, request.Password, request.RepeatPassword)
+	response, err := h.usecase.Register(request)
 	if err != nil {
 		common := CommonResponse{Message: "Internal server error response.", Errors: nil}
 		h.StatusServerError(w, common)

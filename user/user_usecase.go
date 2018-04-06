@@ -9,8 +9,8 @@ import (
 
 // UsecaseInterface interface.
 type UsecaseInterface interface {
-	Login(string, string) (PostRegisterByDeviceResponse, error)
-	Register(string, string, string) (CommonResponse, error)
+	Login(LoginRequest) (LoginReponse, error)
+	Register(RegisterRequest) (CommonResponse, error)
 }
 
 // Usecase struct.
@@ -20,10 +20,10 @@ type Usecase struct {
 	repository RepositoryInterface
 }
 
-func (u *Usecase) Login(username string, password string) (response PostRegisterByDeviceResponse, err error) {
+func (u *Usecase) Login(request LoginRequest) (response LoginReponse, err error) {
 	// var userID int64
-	response = PostRegisterByDeviceResponse{}
-	user, err := u.repository.Find(username, password)
+	response = LoginReponse{}
+	user, err := u.repository.Find(request.Username, request.Password)
 	if err != nil {
 		return response, utils.ErrorsWrap(err, "repositoryInterface.Find() error")
 	}
@@ -35,23 +35,20 @@ func (u *Usecase) Login(username string, password string) (response PostRegister
 	return
 }
 
-func (u *Usecase) Register(username string, password string, repeatPassword string) (response CommonResponse, err error) {
+func (u *Usecase) Register(request RegisterRequest) (response CommonResponse, err error) {
 	response = CommonResponse{}
 
-	if password != repeatPassword {
+	if request.Password != request.RepeatPassword {
 		return response, utils.ErrorsWrap(err, "password not match")
 	}
 
 	response.Message = "Register success"
 	user := User{
-		Username: username,
-		Password: password,
+		Username: request.Username,
+		Password: request.Password,
 	}
-	tx := u.db.Begin()
 	_, err = u.repository.Create(user)
-	tx.Commit()
 	if err != nil {
-		tx.Rollback()
 		return response, utils.ErrorsWrap(err, "repository.Create() error")
 	}
 	return
