@@ -11,6 +11,7 @@ import (
 type RepositoryInterface interface {
 	Find(string, string) (User, error)
 	Create(User) (User, error)
+	Destroy(id uint64) string
 }
 
 // Repository struct.
@@ -33,6 +34,19 @@ func (r *Repository) Find(username string, password string) (User, error) {
 	user := User{Username: username, Password: password}
 	err := r.masterDB.First(&user, user).Error
 	return user, utils.ErrorsWrap(err, "Can't find this user")
+}
+
+func (r *Repository) Destroy(id uint64) string {
+	user := User{}
+	r.readDB.First(&user, id)
+	if user.ID == 0 {
+		return "User Not Found"
+	}
+	err := r.masterDB.Delete(&user)
+	if err.Error != nil {
+		return "Delete Fail"
+	}
+	return "Delete Success"
 }
 
 // NewRepository responses new Repository instance.

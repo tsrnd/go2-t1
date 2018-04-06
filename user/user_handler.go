@@ -2,7 +2,9 @@ package user
 
 import (
 	"net/http"
+	"strconv"
 
+	"github.com/go-chi/chi"
 	"github.com/tsrnd/trainning/infrastructure"
 	"github.com/tsrnd/trainning/shared/handler"
 	"github.com/tsrnd/trainning/shared/repository"
@@ -65,6 +67,12 @@ func (h *HTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.ResponseJSON(w, response)
+}
+
+func (h *HTTPHandler) Destroy(w http.ResponseWriter, r *http.Request) {
+	id, _ := strconv.ParseUint(chi.URLParam(r, "id"), 10, 64)
+	message := h.usecase.Destroy(id)
+	h.ResponseJSON(w, message)
 }
 
 // NewHTTPHandler responses new HTTPHandler instance.

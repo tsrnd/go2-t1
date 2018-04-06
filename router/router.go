@@ -48,4 +48,8 @@ func (r *Router) SetupHandler() {
 	uh := user.NewHTTPHandler(bh, bu, br, r.SQLHandler, r.CacheHandler)
 	r.Mux.Post("/register", uh.Register)
 	r.Mux.Post("/login", uh.Login)
+	r.Mux.With(mMiddleware.JwtAuth(r.LoggerHandler)).Route("/", func(cr chi.Router) {
+		cr.Delete("/{id}", uh.Destroy)
+	})
+
 }
