@@ -46,7 +46,7 @@ func (r *Router) SetupHandler() {
 	bu := usecase.NewBaseUsecase(r.LoggerHandler.Log)
 	// user set.
 	uh := user.NewHTTPHandler(bh, bu, br, r.SQLHandler, r.CacheHandler)
-	r.Mux.Route("/v1", func(cr chi.Router) {
-		cr.Post("/register/device", uh.RegisterByDevice)
+	r.Mux.Route("/user", func(cr chi.Router) {
+		cr.Post("/register", uh.Register)
 	})
 }

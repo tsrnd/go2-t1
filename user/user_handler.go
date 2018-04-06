@@ -3,7 +3,6 @@ package user
 import (
 	"net/http"
 
-	"github.com/sirupsen/logrus"
 	"github.com/tsrnd/trainning/infrastructure"
 	"github.com/tsrnd/trainning/shared/handler"
 	"github.com/tsrnd/trainning/shared/repository"
@@ -16,34 +15,20 @@ type HTTPHandler struct {
 	usecase UsecaseInterface
 }
 
-// RegisterByDevice to register user ID which originates from Device ID.
-//
-// "First": Search User from Entity by Device ID.
-// "Second": If User record exists,move to step "Finally".
-// "Third": If User record does not exist, register device ID to Entity.
-// "Finally":store User_ID acquired from Entity to JSON Web Token (JWT).
-func (h *HTTPHandler) RegisterByDevice(w http.ResponseWriter, r *http.Request) {
-	// mapping post to struct.
-	request := PostRegisterByDeviceRequest{}
+func (h *HTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
+	request := PostRegisterRequest{}
 	err := h.Parse(r, &request)
 	if err != nil {
-		common := CommonResponse{Message: "Parse request error.", Errors: nil}
+		common := CommonResponse{Message: "Parse request error.", Errors: []string{}}
 		h.StatusBadRequest(w, common)
 		return
 	}
-
-	// validate get data.
 	if err = h.Validate(w, request); err != nil {
 		return
 	}
-
-	// request login by uuid.
-	response, err := h.usecase.RegisterByDevice(request.DeviceID)
+	response, err := h.usecase.Register(request)
 	if err != nil {
-		h.Logger.WithFields(logrus.Fields{
-			"error": err,
-		}).Error("usecaseInterface.LoginByDevice() error")
-		common := CommonResponse{Message: "Internal server error response.", Errors: nil}
+		common := CommonResponse{Message: "Internal server error response.", Errors: []string{}}
 		h.StatusServerError(w, common)
 		return
 	}
