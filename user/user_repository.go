@@ -21,6 +21,8 @@ type RepositoryInterface interface {
 	CheckUserByID(id uint64) error
 	AddImageToS3(Image) (string, error)
 	UpdateUser(password, phone, avatar string, id uint64) error
+	Find(string, string) (User, error)
+	Create(User) (User, error)
 }
 
 // Repository struct.
@@ -72,6 +74,19 @@ func (r *Repository) UpdateUser(password, phone, avatar string, id uint64) error
 		err = utils.ErrorsWrap(updateUser.Error, "Can't create error.")
 	}
 	return err
+}
+
+// Create func create user whose information is given
+func (r *Repository) Create(user User) (User, error) {
+	result := r.masterDB.FirstOrCreate(&user, User{Username: user.Username})
+	return user, utils.ErrorsWrap(result.Error, "Can't create user")
+}
+
+// Find func will find information of user
+func (r *Repository) Find(username string, password string) (User, error) {
+	user := User{Username: username, Password: password}
+	err := r.masterDB.First(&user, user).Error
+	return user, utils.ErrorsWrap(err, "Can't find this user")
 }
 
 // NewRepository responses new Repository instance.

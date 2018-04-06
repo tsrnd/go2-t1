@@ -14,3 +14,9 @@ type ResponseUser struct {
 	Phone    string `json:"phone"`
 	Avatar   string `json:"avatar"`
 }
+
+// LoginReponse response.
+type LoginReponse struct {
+	CommonResponse
+	Token string `json:"token"`
+}

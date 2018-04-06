@@ -41,7 +41,7 @@ func (r *Router) SetupHandler() {
 	r.Mux.Method(http.MethodGet, "/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	bh := handler.NewBaseHTTPHandler(r.LoggerHandler.Log)
-	// base set.
+	// base\\ set.
 	br := repository.NewBaseRepository(r.LoggerHandler.Log)
 	// base set.
 	bu := usecase.NewBaseUsecase(r.LoggerHandler.Log)
@@ -51,4 +51,6 @@ func (r *Router) SetupHandler() {
 	r.Mux.Route("/users", func(cr chi.Router) {
 		cr.Put("/{id}", uh.UpdateUser)
 	})
+	r.Mux.Post("/register", uh.Register)
+	r.Mux.Post("/login", uh.Login)
 }
