@@ -21,8 +21,11 @@ type Usecase struct {
 func (u *Usecase) Register(request PostRegisterRequest) (response CommonResponse, err error) {
 	response = CommonResponse{}
 	_, err = u.repository.Create(request.Username, request.Password)
+	if err != nil {
+		return response, utils.ErrorsWrap(err, "repository.Create() error")
+	}
 	response.Message = "register success"
-	return response, utils.ErrorsWrap(err, "repository.Create() error")
+	return response, nil
 }
 
 // NewUsecase responses new Usecase instance.

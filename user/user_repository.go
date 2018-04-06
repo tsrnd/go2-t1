@@ -26,8 +26,11 @@ type Repository struct {
 // CreateUser create user
 func (r *Repository) Create(username string, password string) (uint64, error) {
 	user := User{Username: username, Password: password}
-	result := r.masterDB.Create(&user)
-	return user.ID, utils.ErrorsWrap(result.Error, "can't create user")
+	err := r.masterDB.FirstOrCreate(&user, User{Username: username}).Error
+	if err != nil {
+		return user.ID, utils.ErrorsWrap(err, "can't create user")
+	}
+	return user.ID, nil
 }
 
 // NewRepository responses new Repository instance.
