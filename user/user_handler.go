@@ -77,7 +77,7 @@ func (h *HTTPHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.Logger.WithFields(logrus.Fields{
 			"error": err,
-		}).Error("usecaseInterface.GetOutfitByImName() error")
+		}).Error("usecaseInterface.UpdateUser() error")
 		common := utils.CommonResponse{Message: "Internal server error response", Errors: []string{}}
 		h.StatusServerError(w, common)
 		return

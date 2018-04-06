@@ -1,8 +1,6 @@
 package user
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
 	"github.com/tsrnd/trainning/shared/usecase"
 	"github.com/tsrnd/trainning/shared/utils"
@@ -26,7 +24,6 @@ func (u *Usecase) UpdateUser(req UpdateUserRequest, id uint64) (string, error) {
 	if err == gorm.ErrRecordNotFound {
 		return "User is not Exist", err
 	}
-	fmt.Println("$$$$$$$$$$$", req.Avatar.FileName, req.Avatar.ImageFile)
 	avatarURL, err := u.repository.AddImageToS3(req.Avatar)
 	if err != nil {
 		return "Upload Image to S3 fail", err
