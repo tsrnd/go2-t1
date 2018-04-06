@@ -2,6 +2,6 @@ package utils
 
 // CommonResponse responses common json data.
 type CommonResponse struct {
-	Message string   `json:"message,omitempty"`
-	Errors  []string `json:"errors,omitempty"`
+	Message string   `json:"message"`
+	Errors  []string `json:"errors"`
 }

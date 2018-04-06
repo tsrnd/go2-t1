@@ -19,6 +19,7 @@ type Router struct {
 	SQLHandler    *infrastructure.SQL
 	CacheHandler  *infrastructure.Cache
 	LoggerHandler *infrastructure.Logger
+	S3Handler     *infrastructure.S3
 }
 
 // InitializeRouter initializes Mux and middleware
@@ -45,7 +46,9 @@ func (r *Router) SetupHandler() {
 	// base set.
 	bu := usecase.NewBaseUsecase(r.LoggerHandler.Log)
 	// user set.
-	uh := user.NewHTTPHandler(bh, bu, br, r.SQLHandler, r.CacheHandler)
+	uh := user.NewHTTPHandler(bh, bu, br, r.SQLHandler, r.CacheHandler, r.S3Handler)
 
-	r.Mux.Get("/user", uh.GetAllUser)
+	r.Mux.Route("/users", func(cr chi.Router) {
+		cr.Put("/{id}", uh.UpdateUser)
+	})
 }

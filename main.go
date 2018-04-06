@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/tsrnd/trainning/infrastructure"
 	"github.com/tsrnd/trainning/router"
-	mMiddleware "github.com/tsrnd/trainning/shared/middleware"
+	"github.com/tsrnd/trainning/shared/monitoring"
 )
 
 func main() {
@@ -21,15 +21,22 @@ func main() {
 func startExt() {
 	// sql new.
 	sqlHandler := infrastructure.NewSQL()
+	// s3 new.
+	s3Handler := infrastructure.NewS3()
 	// cache new.
 	cacheHandler := infrastructure.NewCache()
 	// logger new.
 	loggerHandler := infrastructure.NewLogger()
 
+	// monitoring setup
+	mLogger := infrastructure.NewLoggerWithType("monitoring")
+	monitoring.Setup(mLogger)
+
 	mux := chi.NewRouter()
 	r := &router.Router{
 		Mux:           mux,
 		SQLHandler:    sqlHandler,
+		S3Handler:     s3Handler,
 		CacheHandler:  cacheHandler,
 		LoggerHandler: loggerHandler,
 	}
@@ -40,6 +47,7 @@ func startExt() {
 	// after process
 	defer infrastructure.CloseLogger(r.LoggerHandler.Logfile)
 	defer infrastructure.CloseRedis(r.CacheHandler.Conn)
+	defer infrastructure.CloseLogger(mLogger.Logfile)
 
 	_ = http.ListenAndServe(":8080", mux)
 }
@@ -47,7 +55,7 @@ func startExt() {
 func startInt() {
 	mux := chi.NewRouter()
 	logger := infrastructure.NewLogger()
-	mux.Use(mMiddleware.Logger(logger))
+	// mux.Use(mMiddleware.Logger(logger))
 
 	defer infrastructure.CloseLogger(logger.Logfile)
 

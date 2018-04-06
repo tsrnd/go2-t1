@@ -12,4 +12,5 @@ type ResponseUser struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Phone    string `json:"phone"`
+	Avatar   string `json:"avatar"`
 }

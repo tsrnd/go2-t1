@@ -1,6 +1,8 @@
 package user
 
 import (
+	"fmt"
+
 	"github.com/jinzhu/gorm"
 	"github.com/tsrnd/trainning/shared/usecase"
 	"github.com/tsrnd/trainning/shared/utils"
@@ -8,7 +10,7 @@ import (
 
 // UsecaseInterface interface.
 type UsecaseInterface interface {
-	GetAllUser() ([]ResponseUser, error)
+	UpdateUser(req UpdateUserRequest, id uint64) (string, error)
 }
 
 // Usecase struct.
@@ -18,18 +20,24 @@ type Usecase struct {
 	repository RepositoryInterface
 }
 
-// GetAllUser comment
-func (u *Usecase) GetAllUser() ([]ResponseUser, error) {
-	user, err := u.repository.GetAllUser()
+// UpdateUser update
+func (u *Usecase) UpdateUser(req UpdateUserRequest, id uint64) (string, error) {
+	err := u.repository.CheckUserByID(id)
+	if err == gorm.ErrRecordNotFound {
+		return "User is not Exist", err
+	}
+	fmt.Println("$$$$$$$$$$$", req.Avatar.FileName, req.Avatar.ImageFile)
+	avatarURL, err := u.repository.AddImageToS3(req.Avatar)
+	if err != nil {
+		return "Upload Image to S3 fail", err
+	}
+	err = u.repository.UpdateUser(req.Password, req.Phone, avatarURL, id)
 	if err != nil {
 		err = utils.ErrorsWrap(err, "Error")
+		return "repository.UpdateUser error", err
 	}
-	responseUser := []ResponseUser{}
+	return "Update Information of User successfully", err
 
-	for _, v := range user {
-		responseUser = append(responseUser, ResponseUser{ID: v.ID, Username: v.Username, Password: v.Password, Phone: v.Phone})
-	}
-	return responseUser, err
 }
 
 // NewUsecase responses new Usecase instance.
