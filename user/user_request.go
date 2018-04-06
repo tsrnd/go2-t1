@@ -9,6 +9,4 @@ type PostRegisterByDeviceRequest struct {
 type PostRegisterRequest struct {
 	Username string `form:"username" validate:"required"`
 	Password string `form:"password" validate:"required"`
-	Phone    string `form:"phone" validate:"numeric"`
-	Avatar   string `form:"avatar"`
 }

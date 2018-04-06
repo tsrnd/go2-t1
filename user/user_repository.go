@@ -9,7 +9,7 @@ import (
 
 // RepositoryInterface interface.
 type RepositoryInterface interface {
-	Create(string, string, string, string, *gorm.DB) (uint64, error)
+	Create(string, string) (uint64, error)
 }
 
 // Repository struct.
@@ -24,9 +24,9 @@ type Repository struct {
 }
 
 // CreateUser create user
-func (r *Repository) Create(username string, password string, phone string, avatar string, tx *gorm.DB) (uint64, error) {
-	user := User{Username: username, Password: password, Phone: phone, Avatar: avatar}
-	result := tx.Create(&user)
+func (r *Repository) Create(username string, password string) (uint64, error) {
+	user := User{Username: username, Password: password}
+	result := r.masterDB.Create(&user)
 	return user.ID, utils.ErrorsWrap(result.Error, "can't create user")
 }
 

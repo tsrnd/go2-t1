@@ -47,6 +47,6 @@ func (r *Router) SetupHandler() {
 	// user set.
 	uh := user.NewHTTPHandler(bh, bu, br, r.SQLHandler, r.CacheHandler)
 	r.Mux.Route("/user", func(cr chi.Router) {
-		cr.Post("/add", uh.Register)
+		cr.Post("/register", uh.Register)
 	})
 }

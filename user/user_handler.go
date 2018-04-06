@@ -26,12 +26,13 @@ func (h *HTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
 	if err = h.Validate(w, request); err != nil {
 		return
 	}
-	err = h.usecase.Register(request)
+	response, err := h.usecase.Register(request)
 	if err != nil {
 		common := CommonResponse{Message: "Internal server error response.", Errors: nil}
 		h.StatusServerError(w, common)
 		return
 	}
+	h.ResponseJSON(w, response)
 }
 
 // NewHTTPHandler responses new HTTPHandler instance.
