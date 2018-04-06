@@ -7,7 +7,7 @@ type CommonResponse struct {
 }
 
 // PostRegisterByDeviceResponse response.
-type PostRegisterByDeviceResponse struct {
+type LoginReponse struct {
 	CommonResponse
 	Token string `json:"token"`
 }

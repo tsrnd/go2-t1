@@ -9,7 +9,8 @@ import (
 
 // RepositoryInterface interface.
 type RepositoryInterface interface {
-	Create(string, string) (uint64, error)
+	Find(string, string) (User, error)
+	Create(User) (User, error)
 }
 
 // Repository struct.
@@ -23,14 +24,15 @@ type Repository struct {
 	redis *redis.Conn
 }
 
-// CreateUser create user
-func (r *Repository) Create(username string, password string) (uint64, error) {
+func (r *Repository) Create(user User) (User, error) {
+	result := r.masterDB.FirstOrCreate(&user, User{Username: user.Username})
+	return user, utils.ErrorsWrap(result.Error, "Can't create user")
+}
+
+func (r *Repository) Find(username string, password string) (User, error) {
 	user := User{Username: username, Password: password}
-	err := r.masterDB.FirstOrCreate(&user, User{Username: username}).Error
-	if err != nil {
-		return user.ID, utils.ErrorsWrap(err, "can't create user")
-	}
-	return user.ID, nil
+	err := r.masterDB.First(&user, user).Error
+	return user, utils.ErrorsWrap(err, "Can't find this user")
 }
 
 // NewRepository responses new Repository instance.

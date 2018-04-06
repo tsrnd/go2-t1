@@ -2,13 +2,15 @@ package user
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/tsrnd/trainning/authentication"
 	"github.com/tsrnd/trainning/shared/usecase"
 	"github.com/tsrnd/trainning/shared/utils"
 )
 
 // UsecaseInterface interface.
 type UsecaseInterface interface {
-	Register(request PostRegisterRequest) (CommonResponse, error)
+	Login(LoginRequest) (LoginReponse, error)
+	Register(RegisterRequest) (CommonResponse, error)
 }
 
 // Usecase struct.
@@ -18,14 +20,38 @@ type Usecase struct {
 	repository RepositoryInterface
 }
 
-func (u *Usecase) Register(request PostRegisterRequest) (response CommonResponse, err error) {
+func (u *Usecase) Login(request LoginRequest) (response LoginReponse, err error) {
+	// var userID int64
+	response = LoginReponse{}
+	user, err := u.repository.Find(request.Username, request.Password)
+	if err != nil {
+		return response, utils.ErrorsWrap(err, "repositoryInterface.Find() error")
+	}
+	// store user to JWT
+	response.Token, err = authentication.GenerateToken(user)
+	if err != nil {
+		return response, utils.ErrorsWrap(err, "repository.GenerateJWToken() error")
+	}
+	return
+}
+
+func (u *Usecase) Register(request RegisterRequest) (response CommonResponse, err error) {
 	response = CommonResponse{}
-	_, err = u.repository.Create(request.Username, request.Password)
+
+	if request.Password != request.RepeatPassword {
+		return response, utils.ErrorsWrap(err, "password not match")
+	}
+
+	response.Message = "Register success"
+	user := User{
+		Username: request.Username,
+		Password: request.Password,
+	}
+	_, err = u.repository.Create(user)
 	if err != nil {
 		return response, utils.ErrorsWrap(err, "repository.Create() error")
 	}
-	response.Message = "register success"
-	return response, nil
+	return
 }
 
 // NewUsecase responses new Usecase instance.

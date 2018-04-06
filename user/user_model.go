@@ -15,7 +15,7 @@ type User struct {
 	Username string `gorm:"column:username;type:char(36)"`
 	Password string `gorm:"column:password;type:char(20)"`
 	Phone    string `gorm:"column:phone;type:varchar(11)"`
-	Avatar   string `gorm:"column:avatar;type:varchar(256)"`
+	Avatar   string `gorm:column:avatar;type:varchar(256)"`
 	model.BaseModel
 }
 
