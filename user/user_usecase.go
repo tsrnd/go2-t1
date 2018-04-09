@@ -11,7 +11,7 @@ import (
 type UsecaseInterface interface {
 	Login(LoginRequest) (LoginReponse, error)
 	Register(RegisterRequest) (CommonResponse, error)
-	Destroy(id uint64) string
+	Destroy(id uint64) error
 }
 
 // Usecase struct.
@@ -55,8 +55,9 @@ func (u *Usecase) Register(request RegisterRequest) (response CommonResponse, er
 	return
 }
 
-func (u *Usecase) Destroy(id uint64) string {
-	return u.repository.Destroy(id)
+func (u *Usecase) Destroy(id uint64) error {
+	err := u.repository.Destroy(id)
+	return err
 }
 
 // NewUsecase responses new Usecase instance.

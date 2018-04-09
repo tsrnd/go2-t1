@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi"
+	"github.com/jinzhu/gorm"
 	"github.com/tsrnd/trainning/infrastructure"
 	"github.com/tsrnd/trainning/shared/handler"
 	"github.com/tsrnd/trainning/shared/repository"
@@ -70,9 +71,25 @@ func (h *HTTPHandler) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *HTTPHandler) Destroy(w http.ResponseWriter, r *http.Request) {
-	id, _ := strconv.ParseUint(chi.URLParam(r, "id"), 10, 64)
-	message := h.usecase.Destroy(id)
-	h.ResponseJSON(w, message)
+	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 64)
+
+	if err != nil {
+		common := CommonResponse{Message: "Parse Request Error.", Errors: []string{}}
+		h.StatusBadRequest(w, common)
+	}
+
+	err = h.usecase.Destroy(id)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			common := CommonResponse{Message: "User Not Found.", Errors: []string{}}
+			h.StatusNotFoundRequest(w, common)
+		}
+		common := CommonResponse{Message: "Internal Server Error.", Errors: []string{}}
+		h.StatusServerError(w, common)
+	}
+
+	common := CommonResponse{Message: "Delete Success.", Errors: []string{}}
+	h.ResponseJSON(w, common)
 }
 
 // NewHTTPHandler responses new HTTPHandler instance.
