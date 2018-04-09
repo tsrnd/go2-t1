@@ -51,5 +51,4 @@ func (r *Router) SetupHandler() {
 	r.Mux.With(mMiddleware.JwtAuth(r.LoggerHandler)).Route("/", func(cr chi.Router) {
 		cr.Delete("/{id}", uh.Destroy)
 	})
-
 }
