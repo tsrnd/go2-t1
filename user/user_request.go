@@ -20,3 +20,9 @@ type Image struct {
 	FileSize  int64  `form:"image size" validate:"omitempty,gt=0,max=10485760"`
 	FileName  string
 }
+
+// PostRegisterRequest struct.
+type PostRegisterRequest struct {
+	Username string `form:"username" validate:"required,min=6,max=13"`
+	Password string `form:"password" validate:"required,min=6"`
+}

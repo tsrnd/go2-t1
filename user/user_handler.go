@@ -29,12 +29,10 @@ func (h *HTTPHandler) Login(w http.ResponseWriter, r *http.Request) {
 	request := LoginRequest{}
 	err := h.ParseMultipart(r, &request)
 	if err != nil {
-		common := CommonResponse{Message: "Parse request error.", Errors: nil}
+		common := CommonResponse{Message: "Parse request error.", Errors: []string{}}
 		h.StatusBadRequest(w, common)
 		return
 	}
-
-	// validate get data.
 	if err = h.Validate(w, request); err != nil {
 		return
 	}
